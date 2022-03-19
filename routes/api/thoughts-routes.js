@@ -4,9 +4,11 @@ const router = require('express').Router()
 
 router.route('/').get(getAllThoughts).post(newThought)
 
-router.route('/_id').get(getThoughtById).put(updateThought).delete(deleteThoughtById)
+router.route('/:_id').get(getThoughtById).put(updateThought).delete(deleteThoughtById)
 
-router.route('/:thoughtId/reactions').post(newReaction).delete(deleteReactionById)
+router.route('/:thoughtId/reactions').post(newReaction)
+
+router.route('/:thoughtId/reactions/:reactionId').delete(deleteReactionById)
 
 
 module.exports = router
