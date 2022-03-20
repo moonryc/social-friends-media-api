@@ -95,7 +95,7 @@ module.exports = {
     deleteReactionById: async ({params}, res) => {
         const {thoughtId, reactionId} = params
         try {
-            const document = await Thought.findByIdAndUpdate({_id:thoughtId},{$pull:{reactions: {reactionId}}},{new:true,runValidators:true})
+            const document = await Thought.findByIdAndUpdate({_id:thoughtId},{$pull:{reactions: {reactionId:reactionId}}},{new:true,runValidators:true})
             if(!document){
                 return res.status(500).json({message: 'Error creating Reaction with provided Thought ID'})
             }
