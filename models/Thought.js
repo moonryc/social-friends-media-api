@@ -11,7 +11,7 @@ const ReactionSchema = new Schema({
     toJSON:{
         getters:true
     },
-    id:false
+    _id:false
 })
 
 const ThoughtSchema = new Schema({
@@ -25,7 +25,6 @@ const ThoughtSchema = new Schema({
             virtuals: true,
             getters: true
         },
-        id:false
     }
 )
 
