@@ -10,7 +10,8 @@ const ReactionSchema = new Schema({
 },{
     toJSON:{
         getters:true
-    }
+    },
+    id:false
 })
 
 const ThoughtSchema = new Schema({
@@ -21,19 +22,14 @@ const ThoughtSchema = new Schema({
     },
     {
         toJSON: {
-            virtuals: false,
-            getters: false
+            virtuals: true,
+            getters: true
         },
-        // id:false
+        id:false
     }
 )
 
 ThoughtSchema.virtual('reactionCount').get(function () {
-    //TODO is this the right length?
-    console.log(this.reactions)
-    if(this.reactions){
-
-    }
     return this.reactions.length
 })
 

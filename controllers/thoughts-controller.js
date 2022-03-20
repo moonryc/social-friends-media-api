@@ -1,4 +1,4 @@
-const {Thought} = require('../models')
+const {Thought, User} = require('../models')
 
 
 module.exports = {
@@ -16,10 +16,20 @@ module.exports = {
     },
     //creates a new thought
     newThought: async ({body}, res) => {
+        const {username} = body
         try {
+            const doesUserExist = await User.exists({username:username})
+            if(!doesUserExist){
+                return res.status(500).json({message:'could not find user'})
+            }
             const document = await Thought.create(body)
             if(!document){
                 return res.status(500).json({message:'newThought could not be created'})
+            }
+            const user = await User.findOneAndUpdate({username:username},{$push:{thoughts:document._id}},{new:true,runValidators:true})
+            console.log(user)
+            if(!user){
+                return res.status(500).json({message:'newThought could not be added to user'})
             }
             return res.json(document)
         } catch (e) {
@@ -59,6 +69,10 @@ module.exports = {
             const document = await Thought.findByIdAndDelete({_id:_id})
             if (!document) {
                 return res.status(500).json({message: 'Error deleting Thought with provided ID'})
+            }
+            const doesUserExist = await User.findOneAndUpdate({username:document.username}, {$pull:{thoughts:_id}},{new:true,runValidators:true})
+            if(!doesUserExist){
+                return res.status(500).json({message:'could not find user'})
             }
             return res.json(document)
         } catch (e) {

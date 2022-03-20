@@ -1,11 +1,11 @@
-const {User} = require('../models')
+const {User, Thought} = require('../models')
 
 
 module.exports = {
     //gets all users in database
     getAllUsers: async (req, res) => {
         try {
-            const document = await User.find({})
+            const document = await User.find({}).select('-__v')
             if (!document) {
                 return res.status(500).json({message: 'no users found'})
             }
@@ -59,6 +59,14 @@ module.exports = {
             const document = await User.findByIdAndDelete({_id:userId})
             if(!document){
                 return res.status(500).json({message: 'User was not found || Error deleting user'})
+            }
+            const otherUsers = await User.updateMany({$in:{friends:userId}},{$pull:{friends:userId}},{new:true,runValidators:true})
+            if(!otherUsers){
+                return res.status(500).json({message: 'Error deleting user from others friends list'})
+            }
+            const thoughts = await Thought.deleteMany({username:document.username})
+            if(!thoughts){
+                return res.status(500).json({message: 'Error deleting user thoughts'})
             }
             return res.json(document)
         }catch (e) {
